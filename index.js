@@ -6,7 +6,9 @@ const cookieParser = require("cookie-parser");
 
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 const connectDB = require("./config/db");
+
 const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
 
 const app = express();
 
@@ -21,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/post", postRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello world :)");
