@@ -121,8 +121,8 @@ const addComment = asyncHandler(async (req, res) => {
 
 // get all post comment
 const getComments = asyncHandler(async (req, res) => {
-  const postId = req.params.id;
-  const comments = await Comment.find({ post: postId });
+  const postId = req.params.postId;
+  const comments = await Comment.find({ post: postId }).populate("user");
 
   res.status(200).json({ result: comments.length, comments });
 });
