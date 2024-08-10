@@ -70,24 +70,6 @@ const likePost = asyncHandler(async (req, res) => {
   // await user.save();
 });
 
-const check = asyncHandler(async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.user._id;
-
-  const post = await Post.findById(postId);
-
-  if (!post) {
-    res.status(200);
-    throw new Error("post does not incident");
-  }
-  const like = await Like.findOne({ post: postId, user: userId });
-
-  res.send(like);
-  // const user = await User.findById(userId);
-  // user.likes.push(newLike._id);
-  // await user.save();
-});
-
 const addComment = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   const userId = req.user._id;
@@ -125,6 +107,24 @@ const getComments = asyncHandler(async (req, res) => {
   const comments = await Comment.find({ post: postId }).populate("user");
 
   res.status(200).json({ result: comments.length, comments });
+});
+
+const check = asyncHandler(async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id;
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    res.status(200);
+    throw new Error("post does not incident");
+  }
+  const like = await Like.findOne({ post: postId, user: userId });
+
+  res.send(like);
+  // const user = await User.findById(userId);
+  // user.likes.push(newLike._id);
+  // await user.save();
 });
 
 const postController = {
