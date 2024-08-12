@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    photo: { type: String },
+    photo: [String],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
