@@ -22,7 +22,7 @@ const addPost = asyncHandler(async (req, res) => {
 });
 
 const getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({});
+  const posts = await Post.find().populate("user");
 
   res.status(200).json({ result: posts.length, posts });
 });
