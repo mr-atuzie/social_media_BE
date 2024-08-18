@@ -14,9 +14,9 @@ const addPost = asyncHandler(async (req, res) => {
 
   const newPost = await Post.create({ desc, photo, user: userId });
 
-  //   const user = await User.findById(userId);
-  //   user.posts.push(newPost._id);
-  //   await user.save();
+  const user = await User.findById(userId);
+  user.posts.push(newPost._id);
+  await user.save();
 
   res.status(201).json(newPost);
 });
@@ -33,6 +33,14 @@ const getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(postId);
 
   res.status(200).json(post);
+});
+
+const getUserPosts = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  const posts = await Post.find({ user: userId }).populate("user");
+
+  res.status(200).json({ result: posts.length, posts });
 });
 
 const likePost = asyncHandler(async (req, res) => {
@@ -135,6 +143,7 @@ const postController = {
   check,
   addComment,
   getComments,
+  getUserPosts,
 };
 
 module.exports = postController;

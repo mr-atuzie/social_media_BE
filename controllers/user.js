@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Follow = require("../models/follow");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -109,7 +110,7 @@ const uploadPhoto = asyncHandler(async (req, res) => {
 });
 
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().populate("post");
 
   res.status(200).json({ result: users.length, users });
 });
@@ -155,9 +156,14 @@ const followUser = asyncHandler(async (req, res) => {
   const follow = req.params.id;
   const userId = req.user._id;
 
-  const user = await User.findById(userId);
-  user.following.push(follow);
-  await user.save();
+  const followDoc = await Follow.create({
+    following: follow,
+    follower: userId,
+  });
+
+  // const user = await User.findById(userId);
+  // user.following.push(follow);
+  // await user.save();
 });
 
 const userControllers = {

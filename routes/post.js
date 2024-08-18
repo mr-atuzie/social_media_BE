@@ -7,6 +7,8 @@ router.post("/", protect, postController.addPost);
 
 router.get("/", postController.getPosts);
 
+router.get("/user/:id", postController.getUserPosts);
+
 router.get("/:id", protect, postController.getPost);
 
 router.patch("/like/:postId", protect, postController.likePost);

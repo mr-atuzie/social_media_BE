@@ -34,7 +34,8 @@ const userSchema = new mongoose.Schema(
     },
     coverPic: {
       type: String,
-      default: "https://i.ibb.co/4pDNDk1/avatar.png",
+      default:
+        "https://garden.spoonflower.com/c/12359263/p/f/l/bTUNumvFmPzvHski3IXgNWlkrWaTMC0CWTvgFGjzJapZfTNOtUBjMR8/Solid%20light%20grey.jpg",
     },
     phone: {
       type: String,
