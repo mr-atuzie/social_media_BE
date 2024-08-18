@@ -54,6 +54,14 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
     },
+    following: {
+      type: Array,
+      default: [],
+    },
+    follower: {
+      type: Array,
+      default: [],
+    },
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

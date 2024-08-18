@@ -151,6 +151,15 @@ const logout = asyncHandler(async (req, res) => {
   res.status(200).json("Successfully Logged Out");
 });
 
+const followUser = asyncHandler(async (req, res) => {
+  const follow = req.params.id;
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+  user.following.push(follow);
+  await user.save();
+});
+
 const userControllers = {
   loginUser,
   registerUser,
