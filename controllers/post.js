@@ -47,7 +47,7 @@ const likePost = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   const userId = req.user._id;
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).populate("user");
 
   if (!post) {
     res.status(200);
