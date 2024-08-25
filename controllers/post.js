@@ -30,7 +30,7 @@ const getPosts = asyncHandler(async (req, res) => {
 const getPost = asyncHandler(async (req, res) => {
   const postId = req.params.id;
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).populate("user");
 
   res.status(200).json(post);
 });
