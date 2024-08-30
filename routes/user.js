@@ -14,6 +14,8 @@ router.get("/logout", userControllers.logout);
 
 router.get("/", userControllers.getUsers);
 
+router.get("/currentUser", protect, userControllers.currentUser);
+
 router.get("/:id", userControllers.getUser);
 
 router.patch("/uploadPhoto", protect, userControllers.uploadPhoto);

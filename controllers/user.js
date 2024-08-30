@@ -115,6 +115,12 @@ const getUsers = asyncHandler(async (req, res) => {
   res.status(200).json({ result: users.length, users });
 });
 
+const currentUser = asyncHandler(async (req, res) => {
+  const user = await User.find(req.user._id);
+
+  res.status(200).json(user);
+});
+
 const getUser = asyncHandler(async (req, res) => {
   const userId = req.params.id;
 
@@ -174,6 +180,7 @@ const userControllers = {
   logout,
   getUsers,
   getUser,
+  currentUser,
 };
 
 module.exports = userControllers;

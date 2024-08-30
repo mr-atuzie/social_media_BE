@@ -22,7 +22,7 @@ const addPost = asyncHandler(async (req, res) => {
 });
 
 const getPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find().populate("user");
+  const posts = await Post.find().populate("user").sort({ createdAt: -1 });
 
   res.status(200).json({ result: posts.length, posts });
 });
@@ -38,7 +38,9 @@ const getPost = asyncHandler(async (req, res) => {
 const getUserPosts = asyncHandler(async (req, res) => {
   const userId = req.params.id;
 
-  const posts = await Post.find({ user: userId }).populate("user");
+  const posts = await Post.find({ user: userId })
+    .populate("user")
+    .sort({ createdAt: -1 });
 
   res.status(200).json({ result: posts.length, posts });
 });
@@ -112,7 +114,9 @@ const addComment = asyncHandler(async (req, res) => {
 // get all post comment
 const getComments = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
-  const comments = await Comment.find({ post: postId }).populate("user");
+  const comments = await Comment.find({ post: postId })
+    .populate("user")
+    .sort({ createdAt: -1 });
 
   res.status(200).json({ result: comments.length, comments });
 });
