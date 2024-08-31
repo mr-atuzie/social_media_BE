@@ -15,7 +15,7 @@ router.patch("/like/:postId", protect, postController.likePost);
 
 router.post("/comment/:postId", protect, postController.addComment);
 
-router.get("/comment/:postId", postController.getComments);
+router.get("/comments/:postId", postController.getComments);
 
 // test
 router.get("/like/:postId", protect, postController.check);

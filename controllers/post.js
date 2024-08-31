@@ -104,7 +104,11 @@ const addComment = asyncHandler(async (req, res) => {
   post.comments.push(newComment._id);
   await post.save();
 
-  res.status(201).json({ newComment, post });
+  const comments = await Comment.find({ post: postId })
+    .populate("user")
+    .sort({ createdAt: -1 });
+
+  res.status(201).json({ newComment, post, comments });
 
   //   const user = await User.findById(userId);
   //   user.comments.push(newComment._id);
