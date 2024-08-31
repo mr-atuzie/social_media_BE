@@ -9,13 +9,13 @@ router.get("/", postController.getPosts);
 
 router.get("/user/:id", postController.getUserPosts);
 
-router.get("/:id", protect, postController.getPost);
+router.get("/:id", postController.getPost);
 
 router.patch("/like/:postId", protect, postController.likePost);
 
 router.post("/comment/:postId", protect, postController.addComment);
 
-router.get("/comment/:postId", protect, postController.getComments);
+router.get("/comment/:postId", postController.getComments);
 
 // test
 router.get("/like/:postId", protect, postController.check);
