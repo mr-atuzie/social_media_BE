@@ -55,14 +55,20 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
     },
-    following: {
-      type: Array,
-      default: [],
-    },
-    follower: {
-      type: Array,
-      default: [],
-    },
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [], // Default value is an empty array
+      },
+    ],
+    follower: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [], // Default value is an empty array
+      },
+    ],
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const Post = require("../models/post");
 const Like = require("../models/like");
 const Comment = require("../models/comment");
+const Notification = require("../models/notification");
+const User = require("../models/user");
 
 const addPost = asyncHandler(async (req, res) => {
   const { desc, photo } = req.body;
@@ -50,6 +52,7 @@ const likePost = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const post = await Post.findById(postId).populate("user");
+  const likedBy = await User.findById(userId);
 
   if (!post) {
     res.status(200);
@@ -62,6 +65,7 @@ const likePost = asyncHandler(async (req, res) => {
     post.likes = post.likes.filter(
       (item) => item.toString() !== userId.toString()
     );
+
     await post.save();
 
     res.status(200).json({ post, msg: "dislike" });
@@ -72,7 +76,15 @@ const likePost = asyncHandler(async (req, res) => {
     post.likes.push(userId);
     await post.save();
 
-    res.status(200).json({ post, msg: "like" });
+    const notification = await Notification.create({
+      type: "like",
+      msg: `${likedBy.username} liked your post`,
+      user: post.user,
+      post: postId,
+      from: userId,
+    });
+
+    res.status(200).json({ post, msg: "like", notification });
   }
 
   // const user = await User.findById(userId);
@@ -86,6 +98,7 @@ const addComment = asyncHandler(async (req, res) => {
   const { comment } = req.body;
 
   const checkForPost = await Post.findById(postId);
+  const commentedBy = await User.findById(userId);
 
   if (!checkForPost) {
     res.status(200);
@@ -103,6 +116,14 @@ const addComment = asyncHandler(async (req, res) => {
   const post = await Post.findById(postId);
   post.comments.push(newComment._id);
   await post.save();
+
+  await Notification.create({
+    type: "comment",
+    msg: `${commentedBy.username} comment on your post`,
+    user: post.user,
+    post: postId,
+    from: commentedBy._id,
+  });
 
   const comments = await Comment.find({ post: postId })
     .populate("user")
@@ -125,30 +146,11 @@ const getComments = asyncHandler(async (req, res) => {
   res.status(200).json({ result: comments.length, comments });
 });
 
-const check = asyncHandler(async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.user._id;
-
-  const post = await Post.findById(postId);
-
-  if (!post) {
-    res.status(200);
-    throw new Error("post does not incident");
-  }
-  const like = await Like.findOne({ post: postId, user: userId });
-
-  res.send(like);
-  // const user = await User.findById(userId);
-  // user.likes.push(newLike._id);
-  // await user.save();
-});
-
 const postController = {
   addPost,
   getPosts,
   getPost,
   likePost,
-  check,
   addComment,
   getComments,
   getUserPosts,

@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const Follow = require("../models/follow");
+const Notification = require("../models/notification");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
@@ -162,14 +162,96 @@ const followUser = asyncHandler(async (req, res) => {
   const follow = req.params.id;
   const userId = req.user._id;
 
-  const followDoc = await Follow.create({
-    following: follow,
-    follower: userId,
-  });
+  const user = await User.findById(userId);
+  const otherUser = await User.findById(follow);
 
-  // const user = await User.findById(userId);
-  // user.following.push(follow);
-  // await user.save();
+  if (user.following.includes(follow)) {
+    //unfollow user logic
+
+    //remove user id from current user
+    user.following = user.following.filter(
+      (item) => item.toString() !== follow.toString()
+    );
+    await user.save();
+
+    otherUser.follower = otherUser.follower.filter(
+      (item) => item.toString() !== userId.toString()
+    );
+    await otherUser.save();
+
+    await Notification.create({
+      type: "follow",
+      msg: `${user.username} unfollowed you`,
+      user: follow,
+      from: userId,
+    });
+
+    res.status(200).json({ msg: "unfollow", isFollowing: false });
+  } else {
+    //follow user
+    user.following.push(follow);
+    await user.save();
+
+    //update other user
+    otherUser.follower.push(userId);
+    await otherUser.save();
+
+    await Notification.create({
+      type: "follow",
+      msg: `${user.username} followed you`,
+      user: follow,
+      from: userId,
+    });
+
+    res.status(200).json({ msg: "follow", isFollowing: true });
+  }
+});
+
+const isFollowing = asyncHandler(async (req, res) => {
+  const follow = req.params.id;
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+
+  if (user.following.includes(follow)) {
+    res.status(200).json(true);
+  } else {
+    res.status(200).json(false);
+  }
+});
+
+const whoToFollow = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  // Get the current user
+  const currentUser = await User.findById(userId);
+
+  if (!currentUser) {
+    res.status(400);
+    throw new Error("User not found");
+  }
+
+  // Get users who are not followed by the current user
+  const usersToFollow = await User.find(
+    {
+      _id: { $ne: userId }, // Exclude the current user
+      follower: { $nin: [userId] }, // Exclude users that are followed by the current user
+    },
+    "username _id avatar name"
+  );
+
+  res.status(200).json(usersToFollow);
+});
+
+const getNotifcation = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  const notifications = await Notification.find({ user: userId })
+    .populate("from")
+    .populate("post")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json(notifications);
 });
 
 const userControllers = {
@@ -181,6 +263,10 @@ const userControllers = {
   getUsers,
   getUser,
   currentUser,
+  getNotifcation,
+  followUser,
+  isFollowing,
+  whoToFollow,
 };
 
 module.exports = userControllers;

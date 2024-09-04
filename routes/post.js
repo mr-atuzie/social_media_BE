@@ -17,7 +17,4 @@ router.post("/comment/:postId", protect, postController.addComment);
 
 router.get("/comments/:postId", postController.getComments);
 
-// test
-router.get("/like/:postId", protect, postController.check);
-
 module.exports = router;
