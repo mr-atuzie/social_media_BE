@@ -177,6 +177,7 @@ const followUser = asyncHandler(async (req, res) => {
     otherUser.follower = otherUser.follower.filter(
       (item) => item.toString() !== userId.toString()
     );
+
     await otherUser.save();
 
     await Notification.create({
@@ -186,7 +187,17 @@ const followUser = asyncHandler(async (req, res) => {
       from: userId,
     });
 
-    res.status(200).json({ msg: "unfollow", isFollowing: false });
+    const usersToFollow = await User.find(
+      {
+        _id: { $ne: userId }, // Exclude the current user
+        follower: { $nin: [userId] }, // Exclude users that are followed by the current user
+      },
+      "username _id avatar name"
+    );
+
+    res
+      .status(200)
+      .json({ msg: "unfollow", isFollowing: false, usersToFollow });
   } else {
     //follow user
     user.following.push(follow);
@@ -203,7 +214,15 @@ const followUser = asyncHandler(async (req, res) => {
       from: userId,
     });
 
-    res.status(200).json({ msg: "follow", isFollowing: true });
+    const usersToFollow = await User.find(
+      {
+        _id: { $ne: userId }, // Exclude the current user
+        follower: { $nin: [userId] }, // Exclude users that are followed by the current user
+      },
+      "username _id avatar name"
+    );
+
+    res.status(200).json({ msg: "follow", isFollowing: true, usersToFollow });
   }
 });
 
@@ -243,6 +262,42 @@ const whoToFollow = asyncHandler(async (req, res) => {
   res.status(200).json(usersToFollow);
 });
 
+const userFollowers = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  // Find the user and populate the followers array
+  const user = await User.findById(userId).populate(
+    "follower",
+    "username email name avatar coverPic _id"
+  );
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  // Send back the list of followers
+  res.status(200).json(user.follower);
+});
+
+const userFollowing = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  // Find the user and populate the followers array
+  const user = await User.findById(userId).populate(
+    "following",
+    "username email name avatar coverPic _id"
+  );
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  // Send back the list of followers
+  res.status(200).json(user.following);
+});
+
 const getNotifcation = asyncHandler(async (req, res) => {
   const userId = req.params.id;
 
@@ -267,6 +322,8 @@ const userControllers = {
   followUser,
   isFollowing,
   whoToFollow,
+  userFollowers,
+  userFollowing,
 };
 
 module.exports = userControllers;

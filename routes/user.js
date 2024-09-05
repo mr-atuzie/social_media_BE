@@ -22,6 +22,10 @@ router.get("/:id", userControllers.getUser);
 
 router.get("/whoToFollow/:id", userControllers.whoToFollow);
 
+router.get("/followers/:id", userControllers.userFollowers);
+
+router.get("/following/:id", userControllers.userFollowing);
+
 router.patch("/uploadPhoto", protect, userControllers.uploadPhoto);
 
 router.patch("/follow/:id", protect, userControllers.followUser);
