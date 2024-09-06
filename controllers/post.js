@@ -119,7 +119,7 @@ const addComment = asyncHandler(async (req, res) => {
 
   await Notification.create({
     type: "comment",
-    msg: `${commentedBy.username} comment on your post`,
+    msg: `${commentedBy.username} commented on your post`,
     user: post.user,
     post: postId,
     from: commentedBy._id,

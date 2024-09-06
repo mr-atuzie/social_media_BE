@@ -181,7 +181,7 @@ const followUser = asyncHandler(async (req, res) => {
     await otherUser.save();
 
     await Notification.create({
-      type: "follow",
+      type: "unfollow",
       msg: `${user.username} unfollowed you`,
       user: follow,
       from: userId,
