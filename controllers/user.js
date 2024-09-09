@@ -309,6 +309,24 @@ const getNotifcation = asyncHandler(async (req, res) => {
   res.status(200).json(notifications);
 });
 
+const searchUser = asyncHandler(async (req, res) => {
+  const { username } = req.body;
+
+  console.log(username);
+
+  if (!username) {
+    res.status(400);
+    throw new Error("Username  parameter is required");
+  }
+
+  const users = await User.find(
+    { username: { $regex: username, $options: "i" } },
+    "username _id avatar name"
+  ).limit(10);
+
+  res.status(200).json(users);
+});
+
 const userControllers = {
   loginUser,
   registerUser,
@@ -324,6 +342,7 @@ const userControllers = {
   whoToFollow,
   userFollowers,
   userFollowing,
+  searchUser,
 };
 
 module.exports = userControllers;
