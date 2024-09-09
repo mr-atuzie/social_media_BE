@@ -312,8 +312,6 @@ const getNotifcation = asyncHandler(async (req, res) => {
 const searchUser = asyncHandler(async (req, res) => {
   const { username } = req.body;
 
-  console.log(username);
-
   if (!username) {
     res.status(400);
     throw new Error("Username  parameter is required");
