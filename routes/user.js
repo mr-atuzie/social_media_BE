@@ -30,6 +30,8 @@ router.get("/following/:id", userControllers.userFollowing);
 
 router.patch("/uploadPhoto", protect, userControllers.uploadPhoto);
 
+router.patch("/coverPhoto", protect, userControllers.coverPhoto);
+
 router.patch("/follow/:id", protect, userControllers.followUser);
 
 router.get("/isfollowing/:id", protect, userControllers.isFollowing);

@@ -109,6 +109,24 @@ const uploadPhoto = asyncHandler(async (req, res) => {
   res.status(200).json(userDoc);
 });
 
+const coverPhoto = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { photo } = req.body;
+
+  if (!photo) {
+    res.status(400);
+    throw new Error("please add photo");
+  }
+
+  const userDoc = await User.findByIdAndUpdate(
+    userId,
+    { coverPic: photo },
+    { new: true }
+  );
+
+  res.status(200).json(userDoc);
+});
+
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find().populate("post");
 
@@ -329,6 +347,7 @@ const userControllers = {
   loginUser,
   registerUser,
   uploadPhoto,
+  coverPhoto,
   loginStatus,
   logout,
   getUsers,
