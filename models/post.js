@@ -24,6 +24,10 @@ const postSchema = new mongoose.Schema(
         ref: "Comment",
       },
     ],
+    deleted: {
+      type: Boolean,
+      default: false, // Default to false (not deleted)
+    },
   },
   { timestamps: true }
 );

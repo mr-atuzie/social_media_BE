@@ -92,6 +92,30 @@ const likePost = asyncHandler(async (req, res) => {
   // await user.save();
 });
 
+const deletePost = asyncHandler(async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id;
+
+  const post = await Post.findById(postId).populate("user");
+
+  if (!post) {
+    res.status(200);
+    throw new Error("post does not exist");
+  }
+
+  if (post.user !== userId) {
+    res.status(200);
+    throw new Error("Not authorized");
+  }
+
+  const updatedPost = await Post.findByIdAndUpdate(
+    postId,
+    { deleted: true },
+    { new: true }
+  );
+  res.status(200).json(updatedPost);
+});
+
 const addComment = asyncHandler(async (req, res) => {
   const postId = req.params.postId;
   const userId = req.user._id;
@@ -154,6 +178,7 @@ const postController = {
   addComment,
   getComments,
   getUserPosts,
+  deletePost,
 };
 
 module.exports = postController;
