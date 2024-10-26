@@ -4,7 +4,6 @@ const postSchema = new mongoose.Schema(
   {
     desc: {
       type: String,
-      trim: true,
     },
     photo: [String],
     user: {
