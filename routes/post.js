@@ -13,7 +13,7 @@ router.get("/:id", postController.getPost);
 
 router.patch("/like/:postId", protect, postController.likePost);
 
-router.patch("/delete/:postId", protect, postController.deletePost);
+router.delete("/delete/:postId", protect, postController.deletePost);
 
 router.post("/comment/:postId", protect, postController.addComment);
 

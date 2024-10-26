@@ -103,17 +103,27 @@ const deletePost = asyncHandler(async (req, res) => {
     throw new Error("post does not exist");
   }
 
-  if (post.user !== userId) {
+  if (!post.user._id.equals(userId)) {
+    console.log({ 1: post.user._id, 2: userId });
+
     res.status(200);
-    throw new Error("Not authorized");
+    throw new Error("Not authorized ....");
   }
 
-  const updatedPost = await Post.findByIdAndUpdate(
-    postId,
-    { deleted: true },
-    { new: true }
-  );
-  res.status(200).json(updatedPost);
+  // const updatedPost = await Post.findByIdAndUpdate(
+  //   postId,
+  //   { deleted: true },
+  //   { new: true }
+  // );
+
+  await Post.findByIdAndDelete(postId);
+
+  // const posts = await Post.findByIdAndUpdate(postId, { deleted: false });
+  // const posts = await Post.findById(postId).populate("user");
+
+  const posts = await Post.find().populate("user").sort({ createdAt: -1 });
+
+  res.status(200).json(posts);
 });
 
 const addComment = asyncHandler(async (req, res) => {
