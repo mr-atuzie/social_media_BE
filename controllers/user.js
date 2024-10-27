@@ -274,7 +274,7 @@ const whoToFollow = asyncHandler(async (req, res) => {
       _id: { $ne: userId }, // Exclude the current user
       follower: { $nin: [userId] }, // Exclude users that are followed by the current user
     },
-    "username _id avatar name"
+    "username _id avatar name verified"
   );
 
   res.status(200).json(usersToFollow);
