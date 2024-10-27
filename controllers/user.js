@@ -210,7 +210,7 @@ const followUser = asyncHandler(async (req, res) => {
         _id: { $ne: userId }, // Exclude the current user
         follower: { $nin: [userId] }, // Exclude users that are followed by the current user
       },
-      "username _id avatar name"
+      "username _id avatar name verified"
     );
 
     res
@@ -237,7 +237,7 @@ const followUser = asyncHandler(async (req, res) => {
         _id: { $ne: userId }, // Exclude the current user
         follower: { $nin: [userId] }, // Exclude users that are followed by the current user
       },
-      "username _id avatar name"
+      "username _id avatar name verified"
     );
 
     res.status(200).json({ msg: "follow", isFollowing: true, usersToFollow });
@@ -286,7 +286,7 @@ const userFollowers = asyncHandler(async (req, res) => {
   // Find the user and populate the followers array
   const user = await User.findById(userId).populate(
     "follower",
-    "username email name avatar coverPic _id"
+    "username email name avatar coverPic _id verified"
   );
 
   if (!user) {
@@ -304,7 +304,7 @@ const userFollowing = asyncHandler(async (req, res) => {
   // Find the user and populate the followers array
   const user = await User.findById(userId).populate(
     "following",
-    "username email name avatar coverPic _id"
+    "username email name avatar coverPic _id verified"
   );
 
   if (!user) {
@@ -337,7 +337,7 @@ const searchUser = asyncHandler(async (req, res) => {
 
   const users = await User.find(
     { username: { $regex: username, $options: "i" } },
-    "username _id avatar name"
+    "username _id avatar name verified"
   ).limit(10);
 
   res.status(200).json(users);
