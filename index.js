@@ -15,7 +15,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://hilarious-cactus-5430fe.netlify.app",
+      "https://fotoverse.netlify.app",
       "http://localhost:3000",
       "http://localhost:3001",
     ],
