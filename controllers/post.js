@@ -147,7 +147,7 @@ const addComment = asyncHandler(async (req, res) => {
   const newComment = new Comment({ comment, post: postId, user: userId });
   await newComment.save();
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).populate("user");
   post.comments.push(newComment._id);
   await post.save();
 
